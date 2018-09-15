@@ -1,0 +1,38 @@
+.stk-content-wrapper {
+    display:flex;
+    justify-content: space-between;
+}
+.stk-left-content {
+    width: 150px;
+}
+.stk-mid-content {
+    width: calc(100% - 300px);
+}
+.stk-right-content {
+    /*width: 150px;*/
+}
+
+.stk-id {
+    color: green;
+}
+.stk-short-name {
+    color: #69698a;
+}
+.stk-last-value {
+    color:#696955;
+}
+.stk-arrow {
+
+}
+.stk-change-pc.stk-negative {
+    color: red;
+}
+
+.stk-change-pc.stk-positive {
+    color:green
+}
+
+.stk-id, .stk-short-name, .stk-arrow, .stk-change-pc, .stk-last-value, .stk-volume {
+    float:left;
+    clear:left;
+}
