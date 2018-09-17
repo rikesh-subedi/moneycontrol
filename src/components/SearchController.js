@@ -1,7 +1,8 @@
 import React, {Component} from "react";
 import TableView from './TableView';
 import StockCell from './StockCell';
-import SearchInput from './SearchInput'
+import SearchInput from './SearchInput';
+import {Search} from './API';
 export default class SearchController extends Component {
     constructor(props) {
         super(props)
@@ -29,11 +30,28 @@ export default class SearchController extends Component {
     }
     onSearchButtonPressed(text) {
         console.log(text)
+        this.fetchResult(text)
     }
     
     
     cellAtIndexPath(section, row) {
         let stock = this.state.list[row]
-        return <StockCell stock={stock} type="gainer"></StockCell>
+        return <StockCell stock={stock} ></StockCell>
+    }
+
+    fetchResult(query){
+        let request = new Request("https://cors-anywhere.herokuapp.com/"+Search+"&query="+query, new Headers({
+            'X-Requested-With': "XmlHttpRequest"
+        }))
+        fetch(request, {mode: 'cors'})
+        .then(response=>response.json())
+        .then((data)=>{
+            let list = data.result
+            .filter(item => item.category === "Stock")
+            .map(item => {
+                return item
+            })
+            this.setState({list: list});
+        })
     }
 }
