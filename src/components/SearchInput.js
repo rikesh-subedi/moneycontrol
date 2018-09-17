@@ -9,7 +9,7 @@ export default class SearchInput extends Component {
         this._onButtonPressed = this._onButtonPressed.bind(this)
     }
     render(){
-       return <div style={{padding:10, fontSize:30}}>
+       return <div style={{padding:10, fontSize:30, display:"flex", justifyContent: "center", alignItems:"center"}}>
             <input style={{fontSize:30, paddingLeft:10,marginRight:10 }} type='text' placeholder='search stock' onChange={this._onTextChange} value={this.state.text}></input>
             <a ahref="#" onClick={this._onButtonPressed}>
                 <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>

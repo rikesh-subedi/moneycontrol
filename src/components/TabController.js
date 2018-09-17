@@ -3,7 +3,8 @@ export default class TabController extends Component {
     constructor(props){
         super(props)
         this.state = {
-            selectedChild: props.children.length ? props.children[0]: props.children
+            selectedIndex: 0,
+            children: props.children
         }
     }
     render() {
@@ -11,14 +12,15 @@ export default class TabController extends Component {
             <div style={{height:'100%'}}>
                 <div className='RSViewContainer' style={this._getContainerStyle()}>
                     {
-                        this.state.selectedChild
+                        this.state.children.length ? this.state.children[this.state.selectedIndex]: this.state.children
                     }
                 </div>
                 <div className='RSTabContainer' style={this._getTabStyle()}>
                    {
                        this.props.children.length && this.props.children.map((d, i)=> {
-                           return <div key= {i} className='RSTabItem' style={this._getTabItemStyle()}>
-                           <a href='#' onClick={(e) => { e.preventDefault(); this._selectTab(i)}}> 
+                           let isSelected = i == this.state.selectedIndex;
+                           return <div key= {i} className='RSTabItem' style={this._getTabItemStyle(isSelected)}>
+                           <a  style = {{textDecoration:'none', color: !isSelected ? "tomato" : "white"}} href='#' onClick={(e) => { e.preventDefault(); this._selectTab(i)}}> 
                             {d.props.title}
                            </a>
                            </div>
@@ -30,26 +32,35 @@ export default class TabController extends Component {
         )
     }
 
+    _getSelectedStyle(isSelected) {
+        return isSelected ? {
+            backgroundColor: "tomato"
+        } : {
+            backgroundColor: "white"
+        };
+    }
     _selectTab(index) {
-        this.setState({selectedChild: this.props.children[index]})
+        this.setState({selectedIndex: index})
     }
 
-    _getTabStyle() {
+    _getTabStyle(isSelected) {
         return {
             height:50,
             width:'100%',
             position:'absolute',
             bottom:0,
-            backgroundColor:'white',
             display:'flex',
-            justifyContent:'space-evenly'
+            // justifyContent:'space-evenly'
         }
     }
-    _getTabItemStyle() {
+    _getTabItemStyle(isSelected) {
         return {
-            backgroundColor: 'white',
-            margin:5,
-            height:"80%"
+            backgroundColor:isSelected ? "tomato" : "white",
+            padding:5,
+            flex:1,
+            color: !isSelected ? "tomato" : "white",
+            textAlign:'center',
+            alignSelf:'center'
         }
     }
     _getContainerStyle(){
