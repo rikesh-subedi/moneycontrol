@@ -4,12 +4,14 @@ import StockCell from './StockCell';
 import getData from '../mock/data';
 import {TopGainers} from './API';
 import TopGainersHelper from "./TopGainersHelper";
-export default class TopGainersController extends Component {
+import {connect} from 'react-redux';
+import {
+    fetchTopGainers,
+    addToWatchlist
+} from '../actions/commonActions';
+class TopGainersController extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            list:[]
-        }
     }
     render(){
         return (<div>
@@ -22,7 +24,7 @@ export default class TopGainersController extends Component {
     }
     
     numberOfRowsInSection() {
-        return this.state.list.length
+        return this.props.list.length
     }
     
     headerForSection(section) {
@@ -30,8 +32,8 @@ export default class TopGainersController extends Component {
     }
     
     cellAtIndexPath(section, row) {
-        let stock = this.state.list[row]
-        return <StockCell stock={stock} type="gainer"></StockCell>
+        let stock = this.props.list[row]
+        return <StockCell stock={stock} type="gainer" addToWatchlist={this.props.addToWL}></StockCell>
     }
 
     componentDidMount(){
@@ -40,19 +42,21 @@ export default class TopGainersController extends Component {
     }
 
     fetchList(){
-        let request = new Request("https://cors-anywhere.herokuapp.com/"+TopGainers, new Headers({
-            'X-Requested-With': "XmlHttpRequest"
-        }))
+        // let request = new Request("https://cors-anywhere.herokuapp.com/"+TopGainers, new Headers({
+        //     'X-Requested-With': "XmlHttpRequest"
+        // }))
 
-        fetch(request, {mode: 'cors'})
-        .then(response=>response.json())
-        .then((data)=>{
-            let list = {
-                list: data.list.item
-            }
-            this.setState(list)
-        })
+        // fetch(request, {mode: 'cors'})
+        // .then(response=>response.json())
+        // .then((data)=>{
+        //     let list = {
+        //         list: data.list.item
+        //     }
+        //     this.setState(list)
+        // })
         //this.setState(getData())
+        this.props.fetch();
+
     }
 
     componentWillUnmount(){
@@ -60,3 +64,21 @@ export default class TopGainersController extends Component {
     }
 
 }
+const mapStateToProps = function(state, ownprops) {
+    return {
+        list: state.TopGainers.list
+    }
+}
+
+const mapDispatcToProps = function(dispatch, ownProps) {
+     return {
+        fetch: () => {
+            dispatch(fetchTopGainers())
+        },
+        addToWL: (stock) => {
+            dispatch(addToWatchlist(stock))
+        }
+     }
+}
+
+export default connect(mapStateToProps, mapDispatcToProps)(TopGainersController)

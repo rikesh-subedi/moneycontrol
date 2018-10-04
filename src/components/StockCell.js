@@ -16,10 +16,8 @@ const StockCellStyle = {
 class StockCell extends Component {
     constructor(props){
         super(props)
-        this.state = props.stock
         this._addToWatchList = this._addToWatchList.bind(this);
-        //this.url = "https://hacker-news.firebaseio.com/v0/item/"+this.state.id+".json"
-        //this.url = "/dist/mock/"+this.state.id+".json"
+        this.state = { stock: props.stock}
     }
 
     _formatedDate(dateInt){
@@ -31,25 +29,27 @@ class StockCell extends Component {
             <div style={StockCellStyle.container}>
                 <div style={{height:40, padding: 10, display:'flex'}} className='stk-content-wrapper'>
                    <div className ='stk-left-content'>
-                    <span className='stk-id' >{this.state.id}</span>
-                    <span className='stk-short-name'>{this.state.shortname}</span>
+                    <span className='stk-id' >{this.state.stock.id}</span>
+                    <span className='stk-short-name'>{this.state.stock.shortname}</span>
                    </div>
                    <div className ='stk-mid-content'>
-                    <span className ='stk-last-value'>{this.state.lastvalue}</span>
-                    <span className ='stk-volume'> vol {this.state.volume}</span>
+                    <span className ='stk-last-value'>{this.state.stock.lastvalue}</span>
+                    <span className ='stk-volume'> vol {this.state.stock.volume}</span>
                    </div>
                    <div className ='stk-right-content'>
                     <div>
                     <span className='stk-arrow'>
                     
-                    {this.state.percentchange < 0 ? <FontAwesomeIcon icon={faCaretDown} style={{color: 'red'}}></FontAwesomeIcon> : <FontAwesomeIcon icon={faCaretUp} style={{color: 'green'}}></FontAwesomeIcon>}
+                    {this.props.stock.percentchange < 0 ? <FontAwesomeIcon icon={faCaretDown} style={{color: 'red'}}></FontAwesomeIcon> : <FontAwesomeIcon icon={faCaretUp} style={{color: 'green'}}></FontAwesomeIcon>}
                     </span>
-                    {this.state.percentchange < 0 ? <span className='stk-change-pc stk-negative'>{this.state.percentchange}%</span> : <span className='stk-change-pc stk-positive'>{this.state.percentchange}%</span> }
+                    {this.props.stock.percentchange < 0 ? <span className='stk-change-pc stk-negative'>{this.state.stock.percentchange}%</span> : <span className='stk-change-pc stk-positive'>{this.state.stock.percentchange}%</span> }
                     </div>
                     <div style={{marginLeft:50}}>
-                    { WatchlistsHelper.exists(this.state) ? <button>
+                    { WatchlistsHelper.exists(this.state.stock) ? <button>
                     <FontAwesomeIcon icon={faCheck}></FontAwesomeIcon>
-                </button> :  <button onClick={this._addToWatchList}>
+                </button> :  <button onClick={() => {
+                    this._addToWatchList(this.state.stock)
+                }}>
                 <FontAwesomeIcon icon={faPlusCircle}></FontAwesomeIcon>
             </button> }
 
@@ -63,7 +63,7 @@ class StockCell extends Component {
         )
     }
     _addToWatchList(e) {
-        WatchlistsHelper.addStock(this.state)
+        WatchlistsHelper.addStock(this.state.stock)
         this.forceUpdate()
     }
 

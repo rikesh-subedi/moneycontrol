@@ -3,13 +3,12 @@ import TableView from './TableView';
 import StockCell from './StockCell';
 import getData from '../mock/data';
 import WatchlistsHelper from './WatchlistsHelper';
+import {fetchWatchlist} from '../actions/commonActions';
+import {connect} from 'react-redux';
 
-export default class WatchlistController extends Component {
+class WatchlistController extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            list:[]
-        }
     }
     render(){
         return (<div>
@@ -22,7 +21,7 @@ export default class WatchlistController extends Component {
     }
     
     numberOfRowsInSection() {
-        return this.state.list.length
+        return this.props.list.length
     }
     
     headerForSection(section) {
@@ -30,19 +29,30 @@ export default class WatchlistController extends Component {
     }
     
     cellAtIndexPath(section, row) {
-        let stock = this.state.list[row]
-        return <StockCell stock={stock}></StockCell>
+        let stock = this.props.list[row]
+        return <StockCell stock={stock} addToWatchlist={()=>{}}></StockCell>
     }
 
     componentDidMount(){
-        this.fetchList()
+        this.props.fetch()
         
     }
-
-    fetchList(){
-        let stocks = WatchlistsHelper.getAllStocks()
-        this.setState({'list': stocks})
-        
-    }
-
 }
+const mapStateToProps = function(state, ownprops) {
+    return {
+        list: state.Watchlist.list
+    }
+}
+
+const mapDispatcToProps = function(dispatch, ownProps) {
+     return {
+        removeFromWatchlist:(stock_id) => {
+
+        },
+        fetch: () => {
+            dispatch(fetchWatchlist())
+        }
+     }
+}
+
+export default connect(mapStateToProps, mapDispatcToProps)(WatchlistController)

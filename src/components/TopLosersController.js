@@ -4,12 +4,11 @@ import StockCell from './StockCell';
 import getData from '../mock/data';
 import {TopLosers} from './API';
 import TopLosersHelper from './TopLosersHelper'
-export default class TopLosersController extends Component {
+import {connect} from 'react-redux';
+import {fetchTopLosers} from '../actions/commonActions';
+class TopLosersController extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            list:[]
-        }
     }
     render(){
         return (<div>
@@ -22,7 +21,7 @@ export default class TopLosersController extends Component {
     }
     
     numberOfRowsInSection() {
-        return this.state.list.length
+        return this.props.list.length
     }
     
     headerForSection(section) {
@@ -30,7 +29,7 @@ export default class TopLosersController extends Component {
     }
     
     cellAtIndexPath(section, row) {
-        let stock = this.state.list[row]
+        let stock = this.props.list[row]
         return <StockCell stock={stock} type="losers"></StockCell>
     }
 
@@ -40,22 +39,42 @@ export default class TopLosersController extends Component {
     }
 
     fetchList(){
-        let request = new Request("https://cors-anywhere.herokuapp.com/"+TopLosers, new Headers({
-            'X-Requested-With': "XmlHttpRequest"
-        }))
+        // let request = new Request("https://cors-anywhere.herokuapp.com/"+TopLosers, new Headers({
+        //     'X-Requested-With': "XmlHttpRequest"
+        // }))
 
-        fetch(request, {mode: 'cors'})
-        .then(response=>response.json())
-        .then((data)=>{
-            let list = {
-                list: data.list.item
-            }
-            this.setState(list)
-        })
+        // fetch(request, {mode: 'cors'})
+        // .then(response=>response.json())
+        // .then((data)=>{
+        //     let list = {
+        //         list: data.list.item
+        //     }
+        //     this.setState(list)
+        // })
         //this.setState(getData())
+        this.props.fetch();
     }
     componentWillUnmount(){
         TopLosersHelper.saveStocks(this.state.list)
     }
 
 }
+
+const mapStateToProps = function(state, ownprops) {
+    return {
+        list: state.TopLosers.list
+    }
+}
+
+const mapDispatcToProps = function(dispatch, ownProps) {
+     return {
+        fetch: () => {
+            dispatch(fetchTopLosers())
+        },
+        addToWatchlist:(stock) => {
+            dispatch()
+        }
+     }
+}
+
+export default connect(mapStateToProps, mapDispatcToProps)(TopLosersController)
